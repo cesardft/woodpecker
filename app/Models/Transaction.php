@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    public $incrementing = false;
-
-    protected $table = 'transactions';
+    protected $table = 'wallet_transactions';
 
     protected $fillable = [
         'id', 'payee_wallet_id', 'payer_wallet_id', 'amount'

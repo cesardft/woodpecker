@@ -18,9 +18,10 @@ use PHPUnit\Framework\InvalidDataProviderException;
 class TransactionRepository
 {
 
-    public function handle(array $data): Transaction
+    public function handle(array $data): Transaction // $data -> provider, payee_id, amount
     {
 
+        // Se o provedor for retailer não autorizará fazer transações
         if (!$this->guardCanTransfer()){
             throw new TransactionDeniedException('Retailer is not authorized to make transactions', 401);
         }
@@ -31,6 +32,7 @@ class TransactionRepository
 
         $myWallet = Auth::guard($data['provider'])->user()->wallet;
 
+        // Checa se há saldo na carteira
         if (!$this->hasBalance($myWallet, $data['amount'])){
             throw new InsufficientAmountException('Not enough cash. Stranger.', 422);
         }
@@ -51,6 +53,7 @@ class TransactionRepository
 
     public function getProvider(string $provider): AuthenticatableContract{
         if ($provider == 'users'){
+            dd($provider);
             return new User();
         } else if ($provider == 'retailers'){
             return new Retailer();
@@ -62,6 +65,16 @@ class TransactionRepository
     private function hasBalance(Wallet $wallet, $cash): bool
     {
         return $wallet->amount >= $cash;
+    }
+
+    private function checkIfUserProviderExists(array $data)
+    {
+        try {
+            $model = $this->getProvider($data['provider']);
+            return $model->find($data['payee_id']);
+        } catch (InvalidDataProviderException | \Exception $exception){
+            return false;
+        }
     }
 
     private function makeTransaction($payee, array $data)
@@ -82,15 +95,5 @@ class TransactionRepository
             return $transaction;
 
         });
-    }
-
-    private function checkIfUserProviderExists(array $data)
-    {
-        try {
-            $model = $this->getProvider($data['provider']);
-            return $model->find($data['payee_id']);
-        } catch (InvalidDataProviderException | \Exception $exception){
-            return false;
-        }
     }
 }

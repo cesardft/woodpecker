@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Wallet extends Model
 {
 
-    public $incrementing = true;
-
     protected $fillable = [
         'id', 'user_id', 'amount'
     ];
