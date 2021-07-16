@@ -35,14 +35,12 @@ class TransactionController extends Controller
        $fields = $request->only(['provider', 'payee_id', 'amount']);
         try {
             $result = $this->repository->handle($fields);
+            return response()->json($result);
+
         } catch (InvalidDataProviderException | InsufficientSetupException $exception) {
             return response()->json(['error' => $exception->getMessage()], 422);
         } catch (TransactionDeniedException $exception){
             return response()->json(['error' => $exception->getMessage()], 401);
-        } catch (\Exception $exception){
-
         }
-
-        return response()->json($result);
     }
 }

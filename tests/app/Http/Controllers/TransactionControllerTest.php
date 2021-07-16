@@ -83,6 +83,16 @@ class TransactionControllerTest extends TestCase
             ->post(route('transaction'), $payload);
 
         $request->assertResponseStatus(200);
+
+        $request->seeInDatabase('wallets', [
+            'id' => $payer->wallet->id,
+            'balance' => 900
+        ]);
+
+        $request->seeInDatabase('wallets', [
+            'id' => $payee->wallet->id,
+            'balance' => 100
+        ]);
     }
 
 }

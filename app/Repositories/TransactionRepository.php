@@ -3,7 +3,6 @@
 
 namespace App\Repositories;
 
-
 use App\Exceptions\InsufficientAmountException;
 use App\Exceptions\TransactionDeniedException;
 use App\Models\Transaction;
@@ -13,19 +12,22 @@ use App\Models\Wallet;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class TransactionRepository
 {
 
-    public function handle(array $data): array
+    public function handle(array $data): Transaction
     {
 
         if (!$this->guardCanTransfer()){
             throw new TransactionDeniedException('Retailer is not authorized to make transactions', 401);
         }
 
-        $this->checkIfUserProviderExists($data);
+        if(!$payee = $this->checkIfUserProviderExists($data)){
+            throw new InvalidDataProviderException('User not found.', 404);
+        }
 
         $myWallet = Auth::guard($data['provider'])->user()->wallet;
 
@@ -33,11 +35,7 @@ class TransactionRepository
             throw new InsufficientAmountException('Not enough cash. Stranger.', 422);
         }
 
-        if(!$this->checkIfUserProviderExists($data)){
-            throw new InvalidDataProviderException('teste');
-        }
-
-        return $this->makeTransaction($data);
+        return $this->makeTransaction($payee, $data);
     }
 
     public function guardCanTransfer(): bool
@@ -66,12 +64,12 @@ class TransactionRepository
         return $wallet->amount >= $cash;
     }
 
-    private function makeTransaction(array $data)
+    private function makeTransaction($payee, array $data)
     {
         $payload = [
             'id' => random_int(0, 9999),
             'payer_wallet_id' => Auth::guard($data['provider'])->user()->wallet->id,
-            'payee_wallet_id' => Auth::guard($data['provider'])->user()->wallet->id,
+            'payee_wallet_id' => $payee->wallet->id,
             'amount' => $data['amount']
         ];
 
@@ -81,16 +79,16 @@ class TransactionRepository
             $transaction->walletPayer->withdraw($payload['amount']);
             $transaction->walletPayee->deposit($payload['amount']);
 
-            return $transaction($payload);
+            return $transaction;
 
         });
     }
 
-    private function checkIfUserProviderExists(array $data): bool
+    private function checkIfUserProviderExists(array $data)
     {
         try {
             $model = $this->getProvider($data['provider']);
-            return (bool)$model->findOrFail($data['payee_id']);
+            return $model->find($data['payee_id']);
         } catch (InvalidDataProviderException | \Exception $exception){
             return false;
         }
