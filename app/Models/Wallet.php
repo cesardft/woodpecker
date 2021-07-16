@@ -22,4 +22,19 @@ class Wallet extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function deposit($amount)
+    {
+        $this->update([
+           'amount' => $this->attributes['amount'] + $amount
+        ]);
+
+    }
+
+    public function withdraw($amount)
+    {
+        $this->update([
+            'amount' => $this->attributes['amount'] - $amount
+        ]);
+    }
 }

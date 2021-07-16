@@ -26,7 +26,7 @@ class TransactionController extends Controller
     public function postTransaction(Request $request)
     {
         $this->validate($request, [
-            'provider' => 'required|in:user,retailer',
+            'provider' => 'required|in:users,retailers',
             'payee_id' => 'required',
             'amount' => 'required|numeric'
 
@@ -39,6 +39,8 @@ class TransactionController extends Controller
             return response()->json(['error' => $exception->getMessage()], 422);
         } catch (TransactionDeniedException $exception){
             return response()->json(['error' => $exception->getMessage()], 401);
+        } catch (\Exception $exception){
+
         }
 
         return response()->json($result);

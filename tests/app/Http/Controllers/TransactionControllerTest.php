@@ -25,7 +25,7 @@ class TransactionControllerTest extends TestCase
         $this->artisan('passport:install');
         $user = User::factory()->create();
         $payload = [
-            'provider' => 'user',
+            'provider' => 'users',
             'payee_id' => '998',
             'amount' => 100
         ];
@@ -40,11 +40,11 @@ class TransactionControllerTest extends TestCase
         $this->artisan('passport:install');
         $retailer = Retailer::factory()->create();
         $payload = [
-            'provider' => 'user',
+            'provider' => 'users',
             'payee_id' => '999',
             'amount' => 100
         ];
-        $request = $this->actingAs($retailer, 'retailer')
+        $request = $this->actingAs($retailer, 'retailers')
             ->post(route('transaction'), $payload);
 
         $request->assertResponseStatus(422);
@@ -57,14 +57,32 @@ class TransactionControllerTest extends TestCase
         $payee = User::factory()->create();
 
         $payload = [
-            'provider' => 'user',
+            'provider' => 'users',
             'payee_id' => $payee->id,
             'amount' => 100
         ];
-        $request = $this->actingAs($payer, 'retailer')
+        $request = $this->actingAs($payer, 'retailers')
             ->post(route('transaction'), $payload);
 
         $request->assertResponseStatus(422);
+    }
+
+    public function testUserCanTransferMoney()
+    {
+        $this->artisan('passport:install');
+        $payer = User::factory()->create();
+        $payer->wallet->deposit(1000);
+        $payee = User::factory()->create();
+
+        $payload = [
+            'provider' => 'users',
+            'payee_id' => $payee->id,
+            'amount' => 100
+        ];
+        $request = $this->actingAs($payer, 'users')
+            ->post(route('transaction'), $payload);
+
+        $request->assertResponseStatus(200);
     }
 
 }
