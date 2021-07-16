@@ -3,7 +3,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\AuthRepository;
+use App\Repositories\AuthenticateRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\InvalidDataProviderException;
@@ -12,11 +12,11 @@ class AuthenticateController extends Controller
 {
 
     /**
-     * @var AuthRepository
+     * @var AuthenticateRepository
      */
     private $repository;
 
-    public function __construct(AuthRepository $repository)
+    public function __construct(AuthenticateRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -28,18 +28,15 @@ class AuthenticateController extends Controller
             'password' => 'required'
         ]);
 
-        $fields = $request->only(['email', 'password']);
-
         try{
+            $fields = $request->only(['email', 'password']);
             $result = $this->repository->authenticate($provider, $fields);
-            return response($result);
         } catch (InvalidDataProviderException $exception) {
             return response()->json(['error' => $exception->getMessage()], 422);
         } catch (AuthorizationException $exception) {
             return response()->json(['error' => $exception->getMessage()], 401);
-        } catch (\Exception $exception) {
-            return response()->json(['error' => $exception->getMessage()], 123);
         }
 
+        return response()->json($result);
     }
 }

@@ -4,6 +4,8 @@
 namespace App\Observers;
 
 
+use App\Models\Retailer;
+
 class RetailerObserver
 {
 

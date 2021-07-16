@@ -42,7 +42,6 @@ class TransactionRepository
         } else {
             throw new InvalidDataProviderException('Provider not found.', 422);
         }
-
     }
 
     public function getProvider(string $provider): AuthenticatableContract{

@@ -11,7 +11,7 @@ use PHPUnit\Framework\InvalidDataProviderException;
 use App\Models\User;
 use App\Models\Retailer;
 
-class AuthRepository
+class AuthenticateRepository
 {
 
     public function authenticate(string $provider, array $fields): array

@@ -26,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
     {
         User::observe(UserObserver::class);
         Retailer::observe(Retailer::class);
-        Passport::ignoreMigrations();
         LumenPassport::routes($this->app);
     }
 }
