@@ -53,7 +53,6 @@ class TransactionRepository
 
     public function getProvider(string $provider): AuthenticatableContract{
         if ($provider == 'users'){
-            dd($provider);
             return new User();
         } else if ($provider == 'retailers'){
             return new Retailer();

@@ -25,7 +25,7 @@ class TransactionControllerTest extends TestCase
         $this->artisan('passport:install');
         $user = User::factory()->create();
         $payload = [
-            'provider' => 'users',
+            'provider' => 'user',
             'payee_id' => '998',
             'amount' => 100
         ];
@@ -40,7 +40,7 @@ class TransactionControllerTest extends TestCase
         $this->artisan('passport:install');
         $retailer = Retailer::factory()->create();
         $payload = [
-            'provider' => 'users',
+            'provider' => 'user',
             'payee_id' => '999',
             'amount' => 100
         ];
@@ -57,7 +57,7 @@ class TransactionControllerTest extends TestCase
         $payee = User::factory()->create();
 
         $payload = [
-            'provider' => 'users',
+            'provider' => 'user',
             'payee_id' => $payee->id,
             'amount' => 100
         ];
@@ -86,12 +86,12 @@ class TransactionControllerTest extends TestCase
 
         $request->seeInDatabase('wallets', [
             'id' => $payer->wallet->id,
-            'balance' => 900
+            'amount' => 900
         ]);
 
         $request->seeInDatabase('wallets', [
             'id' => $payee->wallet->id,
-            'balance' => 100
+            'amount' => 100
         ]);
     }
 
