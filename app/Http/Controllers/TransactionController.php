@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\TransactionDeniedException;
 use App\Repositories\TransactionRepository;
 use Laravel\Lumen\Http\Request;
+use phpseclib3\Exception\InsufficientSetupException;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class TransactionController extends Controller
@@ -34,8 +35,8 @@ class TransactionController extends Controller
        $fields = $request->only(['provider', 'payee_id', 'amount']);
         try {
             $result = $this->repository->handle($fields);
-        } catch (InvalidDataProviderException $exception) {
-            return response()->json(['error' => $exception->getMessage()], $exception->getCode());
+        } catch (InvalidDataProviderException | InsufficientSetupException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
         } catch (TransactionDeniedException $exception){
             return response()->json(['error' => $exception->getMessage()], 401);
         }

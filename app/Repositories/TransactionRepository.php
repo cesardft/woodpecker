@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Retailer;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Support\Facades\Auth;
+use phpseclib3\Exception\InsufficientSetupException;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class TransactionRepository
@@ -25,12 +26,9 @@ class TransactionRepository
 
         $user = $model->findOrFail($data['payee_id']);
 
-        $user->wallet->transaction()->create([
-
-
-        ]);
-
-        return [];
+        if (!$this->hasBalance($user, $data['amount'])){
+            throw new InsufficientSetupException('Not enough cash. Stranger.', 422);
+        }
     }
 
     public function guardCanTransfer(): bool
@@ -52,5 +50,10 @@ class TransactionRepository
         } else {
             throw new InvalidDataProviderException('Provider not found.', 422);
         }
+    }
+
+    private function hasBalance($user, $cash): bool
+    {
+        return $user->wallet->amount >= $cash;
     }
 }
