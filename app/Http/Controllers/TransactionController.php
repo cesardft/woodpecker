@@ -9,7 +9,7 @@ use App\Repositories\TransactionRepository;
 use Laravel\Lumen\Http\Request;
 use PHPUnit\Framework\InvalidDataProviderException;
 
-class TransactionController
+class TransactionController extends Controller
 {
 
     /**
@@ -25,7 +25,7 @@ class TransactionController
     public function postTransaction(Request $request)
     {
         $this->validate($request, [
-            'provider' => 'required|in:users,retailers',
+            'provider' => 'required|in:user,retailer',
             'payee_id' => 'required',
             'amount' => 'required|numeric'
 
@@ -35,10 +35,9 @@ class TransactionController
         try {
             $result = $this->repository->handle($fields);
         } catch (InvalidDataProviderException $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
+            return response()->json(['error' => $exception->getMessage()], $exception->getCode());
         } catch (TransactionDeniedException $exception){
             return response()->json(['error' => $exception->getMessage()], 401);
-
         }
 
         return response()->json($result);

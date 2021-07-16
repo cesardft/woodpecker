@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Retailer;
 use App\Models\User;
 
 class ExampleController extends Controller
@@ -19,6 +20,7 @@ class ExampleController extends Controller
     public function test()
     {
         User::factory()->create(['email' => 'cesar@example.com']);
+        Retailer::factory()->create(['email' => 'retailer@example.com']);
     }
 
     //

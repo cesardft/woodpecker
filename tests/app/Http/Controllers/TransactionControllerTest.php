@@ -22,30 +22,28 @@ class TransactionControllerTest extends TestCase
 
     public function testUserShouldBeExistingOnProviderToTransfer()
     {
+        $this->artisan('passport:install');
+        $user = User::factory()->create();
         $payload = [
             'provider' => 'user',
             'payee_id' => '998',
-            'payer_id' => 100
+            'amount' => 100
         ];
-
-        $this->artisan('passport:install');
-        $user = User::factory()->create();
         $request = $this->actingAs($user, 'users')
             ->post(route('transaction'), $payload);
 
-        $request->assertResponseStatus(404);
+        $request->assertResponseStatus(422);
     }
 
     public function testRetailerShouldNotTransfer()
     {
+        $this->artisan('passport:install');
+        $retailer = Retailer::factory()->create();
         $payload = [
             'provider' => 'user',
             'payee_id' => '999',
             'payer_id' => 100
         ];
-
-        $this->artisan('passport:install');
-        $retailer = Retailer::factory()->create();
         $request = $this->actingAs($retailer, 'retailer')
             ->post(route('transaction'), $payload);
 

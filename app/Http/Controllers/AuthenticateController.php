@@ -21,7 +21,8 @@ class AuthenticateController extends Controller
         $this->repository = $repository;
     }
 
-    public function postAuthenticate(Request $request, string $provider){
+    public function postAuthenticate(Request $request, string $provider)
+    {
 
         $this->validate($request, [
             'email' => 'required|email',
