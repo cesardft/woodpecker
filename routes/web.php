@@ -23,4 +23,4 @@ $router->post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'Authentica
 
 $router->get('/users/user', ['as' => 'user', 'uses' => 'UserController@getUser']);
 
-$router->post('/transaction', ['as' => 'transaction', 'uses' => 'TransactionController@postTransaction  ']);
+$router->post('/transaction', ['as' => 'transaction', 'uses' => 'TransactionController@postTransaction']);
