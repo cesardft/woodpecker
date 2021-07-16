@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Exceptions\ServiceUnavailableException;
 use App\Exceptions\TransactionDeniedException;
 use App\Repositories\TransactionRepository;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class TransactionController extends Controller
 
         } catch (InvalidDataProviderException | InsufficientSetupException $exception) {
             return response()->json(['error' => $exception->getMessage()], $exception->getCode());
-        } catch (TransactionDeniedException $exception){
+        } catch (TransactionDeniedException | ServiceUnavailableException $exception){
             return response()->json(['error' => $exception->getMessage()], 401);
         }
     }

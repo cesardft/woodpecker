@@ -4,14 +4,17 @@
 namespace App\Repositories;
 
 use App\Exceptions\InsufficientAmountException;
+use App\Exceptions\ServiceUnavailableException;
 use App\Exceptions\TransactionDeniedException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Retailer;
 use App\Models\Wallet;
+use App\Services\MockService;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Boolean;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\InvalidDataProviderException;
 
@@ -23,7 +26,7 @@ class TransactionRepository
 
         // Se o provedor for retailer não autorizará fazer transações
         if (!$this->guardCanTransfer()){
-            throw new TransactionDeniedException('Retailer is not authorized to make transactions', 401);
+            throw new TransactionDeniedException('Retailer is not authorized to make transactions.', 401);
         }
 
         if(!$payee = $this->checkIfUserProviderExists($data)){
@@ -35,6 +38,10 @@ class TransactionRepository
         // Checa se há saldo na carteira
         if (!$this->hasBalance($myWallet, $data['amount'])){
             throw new InsufficientAmountException('Not enough cash. Stranger.', 422);
+        }
+
+        if($this->isAbleToMakeTransaction()){
+            throw new ServiceUnavailableException('Service Unavailable.');
         }
 
         return $this->makeTransaction($payee, $data);
@@ -92,7 +99,12 @@ class TransactionRepository
             $transaction->walletPayee->deposit($payload['amount']);
 
             return $transaction;
-
         });
+    }
+
+    private function isAbleToMakeTransaction(): bool
+    {
+        $service = app(MockService::class)->authorizeTransaction();
+        return $service == 'Autorizado';
     }
 }
