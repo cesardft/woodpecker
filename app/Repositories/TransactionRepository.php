@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\Exceptions\TransactionDeniedException;
 use App\Models\User;
 use App\Models\Retailer;
+use App\Models\Wallet;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Support\Facades\Auth;
 use phpseclib3\Exception\InsufficientSetupException;
@@ -26,9 +27,13 @@ class TransactionRepository
 
         $user = $model->findOrFail($data['payee_id']);
 
-        if (!$this->hasBalance($user, $data['amount'])){
+        if (!$this->hasBalance($user->wallet, $data['amount'])){
             throw new InsufficientSetupException('Not enough cash. Stranger.', 422);
         }
+        return DB::transcation(function ($user){
+
+        });
+        $user->wallet->transaction();
     }
 
     public function guardCanTransfer(): bool
@@ -52,8 +57,8 @@ class TransactionRepository
         }
     }
 
-    private function hasBalance($user, $cash): bool
+    private function hasBalance(Wallet $wallet, $cash): bool
     {
-        return $user->wallet->amount >= $cash;
+        return $wallet->amount >= $cash;
     }
 }

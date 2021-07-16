@@ -13,7 +13,7 @@ class Transaction extends Model
     protected $table = 'transactions';
 
     protected $fillable = [
-        'id', 'payee_id', 'payer_id', 'value'
+        'id', 'payee_wallet_id', 'payer_wallet_id', 'amount'
     ];
 
     public function wallet()
