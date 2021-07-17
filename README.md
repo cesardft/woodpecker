@@ -40,7 +40,7 @@ php artisan migrate
 
 `/transaction`
 
-    curl -i -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" -X POST -d 'provider=users&payee_id=2&amount=100' http://{url}/transaction
+    curl -i -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" -X POST -d 'provider=users&payee_id=2&amount=100' http://{url}/transaction  
 
 ### Response
 ~~~JSON
