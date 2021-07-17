@@ -21,7 +21,7 @@ use PHPUnit\Framework\InvalidDataProviderException;
 class TransactionRepository
 {
 
-    public function handle(array $data): Transaction // $data -> provider, payee_id, amount
+    public function handle(array $data) // $data -> provider, payee_id, amount
     {
 
         // Se o provedor for retailer não autorizará fazer transações
@@ -86,7 +86,7 @@ class TransactionRepository
     private function makeTransaction($payee, array $data)
     {
         $payload = [
-            'id' => random_int(0, 9999),
+            'id' => random_int(1, 9999),
             'payer_wallet_id' => Auth::guard($data['provider'])->user()->wallet->id,
             'payee_wallet_id' => $payee->wallet->id,
             'amount' => $data['amount']
@@ -98,7 +98,13 @@ class TransactionRepository
             $transaction->walletPayer->withdraw($payload['amount']);
             $transaction->walletPayee->deposit($payload['amount']);
 
-            return $transaction;
+
+            return [
+                'transaction_id' => $transaction['id'],
+                'payer_wallet_id' => $transaction['payer_wallet_id'],
+                'payee_wallet_id' => $transaction['payee_wallet_id'],
+                'amount' => $transaction['amount']
+            ];
         });
     }
 

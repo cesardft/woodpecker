@@ -1,33 +1,65 @@
-version: '3.7'
-
+version: '3'
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: mysql
-    hostname: mysql
-    environment:
-      - MYSQL_DATABASE=picpay
-      - MYSQL_USER=picpay
-      - MYSQL_PASSWORD=root
-    restart: unless-stopped
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql-data:/var/lib/mysql
+
+  #PHP Service
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
     container_name: app
-    hostname: app
     restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
     volumes:
-      - ./src:/var/www/html
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
     ports:
       - "80:80"
-    depends_on:
-      - mysql
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+
+  #MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    environment:
+      MYSQL_DATABASE: picpay
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  mysql-data:
-
-networks:
-  default:
+  dbdata:
+    driver: local

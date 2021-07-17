@@ -1,41 +1,49 @@
-FROM ubuntu:18.04
+FROM php:8.0
 
-RUN apt-get update
-RUN apt-get install -y wget curl nano htop git unzip bzip2 software-properties-common locales
+# Copy composer.lock and composer.json
+COPY composer.lock composer.json /var/www/
 
-WORKDIR /var/www/html
+# Set working directory
+WORKDIR /var/www
 
-RUN LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php
-RUN apt update
-RUN apt-get install -y \
-    php7.4-fpm \
-    php7.4-common \
-    php7.4-curl \
-    php7.4-mysql \
-    php7.4-mbstring \
-    php7.4-json \
-    php7.4-xml \
-    php7.4-bcmath
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl
 
-ADD src/resources/www.conf /etc/php/7.4/fpm/pool.d/www.conf
-RUN mkdir -p /var/run/php
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
-RUN echo "deb http://nginx.org/packages/ubuntu/ trusty nginx" >> /etc/apt/sources.list
-RUN echo "deb-src http://nginx.org/packages/ubuntu/ trusty nginx" >> /etc/apt/sources.list
-RUN apt-get update
+## Install extensions
+#RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+#RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
+#RUN docker-php-ext-install gd
 
-RUN apt-get install -y nginx
-
-ADD src/resources/default /etc/nginx/sites-enabled/
-ADD src/resources/nginx.conf /etc/nginx/
-
-RUN chown -R www-data:www-data .
-
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-EXPOSE 80
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-ENTRYPOINT ["/usr/bin/supervisord"]
+# Copy existing application directory contents
+COPY . /var/www
 
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
+
+# Change current user to www
+USER www
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]

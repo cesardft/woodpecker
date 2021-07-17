@@ -17,7 +17,7 @@ $router->get('/', function () use ($router) {
     return  $router->app->version();
 });
 
-$router->post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'AuthenticateController@postAuthenticate']);
+$router->post('/login/{provider}', ['as' => 'authenticate', 'uses' => 'AuthenticateController@postAuthenticate']);
 
 $router->get('/users/user', ['as' => 'user', 'uses' => 'UserController@getUser']);
 
