@@ -22,7 +22,7 @@
 
 > mysql -uroot -proot
 
-> GRANT ALL ON picpay.* TO 'picpay'@'%' IDENTIFIED BY 'picpay';
+> GRANT ALL ON user.* TO 'user'@'%' IDENTIFIED BY 'user';
 ~~~
 
 **3) Migrating data**
