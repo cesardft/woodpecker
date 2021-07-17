@@ -36,13 +36,13 @@ php artisan migrate
 
 ## API Doc
 
-###Request
+### Request
 
 `/transaction`
 
     curl -i -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" -X POST -d 'provider=users&payee_id=2&amount=100' http://{url}/transaction
 
-###Response
+### Response
 ~~~JSON
     {
     "transaction_id": 8853,
