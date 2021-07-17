@@ -7,8 +7,6 @@
    * Docker
    * Docker-compose
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
-
 ## Setup
 
 **1) Wake up containers:**
