@@ -103,7 +103,7 @@ class TransactionRepository
                 'transaction_id' => $transaction['id'],
                 'payer_wallet_id' => $transaction['payer_wallet_id'],
                 'payee_wallet_id' => $transaction['payee_wallet_id'],
-                'amount' => $transaction['amount']
+                'value' => $transaction['amount']
             ];
         });
     }

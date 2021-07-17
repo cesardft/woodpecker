@@ -34,6 +34,25 @@ docker-compose exec app bash
 php artisan migrate
 ~~~
 
+## API Doc
+
+###Request
+
+`/transaction`
+
+    curl -i -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" -X POST -d 'provider=users&payee_id=2&amount=100' http://{url}/transaction
+
+###Response
+~~~JSON
+    {
+    "transaction_id": 8853,
+    "payer_wallet_id": 4284,
+    "payee_wallet_id": 6317,
+    "amount": "100"
+    }
+~~~
+%% todo %%
+
 ## References
 
 * [Lumen Framework Docs](https://lumen.laravel.com/docs)
