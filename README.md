@@ -34,3 +34,10 @@ docker-compose exec app bash
 php artisan migrate
 ~~~
 
+## References
+
+* [Lumen Framework Docs](https://lumen.laravel.com/docs)
+* [Authentication with Lumen-Passport](https://github.com/dusterio/lumen-passport)
+* [Lumen REST API with Passport and JWT](https://www.youtube.com/watch?v=g_22EUfibJ8)
+* [Setting up an Laravel application with docker-compose](https://lumen.laravel.com/docs)
+
