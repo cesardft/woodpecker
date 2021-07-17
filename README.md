@@ -12,23 +12,24 @@
 **1) Wake up containers:**
    
 ~~~Bash
-> docker-compose up -d
+ docker-compose up -d
 ~~~
 
 **2) Create user and grant access on database**
 
 ~~~Bash
-> docker-compose exec db bash
+ docker-compose exec db bash
 
-> mysql -uroot -proot
+ mysql -uroot -proot
 
-> GRANT ALL ON user.* TO 'user'@'%' IDENTIFIED BY 'user';
+ GRANT ALL ON user.* TO 'user'@'%' IDENTIFIED BY 'user';
 ~~~
 
 **3) Migrating data**
 
 ~~~Bash
 docker-compose exec app bash
+
 php artisan migrate
 ~~~
 
