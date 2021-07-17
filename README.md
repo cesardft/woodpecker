@@ -1,29 +1,36 @@
 # Woodpecker
 
-## Requirements
+# Requirements
 
-PHP 7.2+
-Lumen
-Docker
-Docker-compose
+   * PHP 8.0
+   * Lumen
+   * Docker
+   * Docker-compose
 
 Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
 
-## Build
+## Setup
 
-1. First of all, install required packages, using:
+**1) Wake up containers:**
    
-```composer install```
+~~~Bash
+> docker-compose up -d
+~~~
 
+**2). Create user and grant access on database**
 
-2. Set, if necessary, the ```.env``` file
+~~~Bash
+> docker-compose exec db bash
 
+> mysql -uroot -proot
 
-3. Run migrate command
+> GRANT ALL ON picpay.* TO 'picpay'@'%' IDENTIFIED BY 'picpay';
+~~~
 
-    
-```php artisan migrate```
+**3). Migrating data**
 
-4. Start!
+~~~Bash
+docker-compose exec app bash
+php artisan migrate
+~~~
 
-```php -S localhost:8000 -t src/public```

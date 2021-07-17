@@ -1,4 +1,4 @@
-version: '3'
+version: '2.0'
 services:
 
   #PHP Service
@@ -6,17 +6,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: digitalocean.com/php
+    image: php8.0
     container_name: app
-    restart: unless-stopped
     tty: true
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-    working_dir: /var/www
+    working_dir: /var/www/app/
     volumes:
-      - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./:/var/www/app/
+      - ./php/lumen.ini:/usr/local/etc/php/conf.d/lumen.ini
     networks:
       - app-network
 
@@ -24,34 +23,31 @@ services:
   webserver:
     image: nginx:alpine
     container_name: webserver
-    restart: unless-stopped
     tty: true
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./:/var/www
+      - ./:/var/www/app/
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
 
-
   #MySQL Service
   db:
-    image: mysql:5.7.22
+    image: mysql:5.7.32
     container_name: db
-    restart: unless-stopped
     tty: true
     ports:
       - "3306:3306"
-    volumes:
-      - dbdata:/var/lib/mysql
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_DATABASE: picpay
       MYSQL_ROOT_PASSWORD: root
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
 
@@ -59,7 +55,7 @@ services:
 networks:
   app-network:
     driver: bridge
-
+#Volumes
 volumes:
   dbdata:
     driver: local
