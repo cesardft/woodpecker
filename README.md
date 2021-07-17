@@ -15,7 +15,7 @@
 > docker-compose up -d
 ~~~
 
-**2). Create user and grant access on database**
+**2) Create user and grant access on database**
 
 ~~~Bash
 > docker-compose exec db bash
@@ -25,7 +25,7 @@
 > GRANT ALL ON picpay.* TO 'picpay'@'%' IDENTIFIED BY 'picpay';
 ~~~
 
-**3). Migrating data**
+**3) Migrating data**
 
 ~~~Bash
 docker-compose exec app bash
