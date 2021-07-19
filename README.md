@@ -3,19 +3,26 @@
 # Requirements
 
    * PHP 8.0
-   * Lumen
+   * Composer
    * Docker
    * Docker-compose
 
 ## Setup
 
-**1) Wake up containers:**
+**1) Wake up containers**
    
 ~~~Bash
  docker-compose up -d
 ~~~
 
-**2) Create user and grant access on database**
+**2) Install the dependencies**
+
+~~~Bash
+  composer install
+~~~
+
+
+**3) Create user and grant access on database**
 
 ~~~Bash
  docker-compose exec db bash
@@ -25,7 +32,7 @@
  GRANT ALL ON user.* TO 'user'@'%' IDENTIFIED BY 'user';
 ~~~
 
-**3) Migrating data**
+**4) Migrating data**
 
 ~~~Bash
 docker-compose exec app bash
