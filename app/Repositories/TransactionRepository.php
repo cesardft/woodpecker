@@ -14,8 +14,6 @@ use App\Services\MockService;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\Boolean;
-use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class TransactionRepository
@@ -29,6 +27,7 @@ class TransactionRepository
             throw new TransactionDeniedException('Retailer is not authorized to make transactions.', 401);
         }
 
+        // Checa se o user que eu vou pagar existe
         if(!$payee = $this->checkIfUserProviderExists($data)){
             throw new InvalidDataProviderException('User not found.', 404);
         }

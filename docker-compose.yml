@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: php8.0
+    image: php8.0-fpm
     container_name: app
     tty: true
     environment:
